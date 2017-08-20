@@ -5,18 +5,27 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.11.11"
+
+assemblyJarName in assembly := "scalaPlay.jar"
 
 libraryDependencies ++= Seq(
-  jdbc,
-  cache,
   ws,
   specs2 % Test,
   guice,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test,
-  "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0"
+  "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0",
+  "org.reactivemongo" %% "reactivemongo" % "0.12.5"
   )
 
+PlayKeys.devSettings := Seq("play.server.http.port" -> "8080")
+
+assemblyMergeStrategy in assembly := {
+  case PathList("META-INF", xs @ _*)                 => MergeStrategy.discard
+  case PathList("reference.conf")                    => MergeStrategy.concat
+  case "application.conf"                            => MergeStrategy.concat
+  case x => MergeStrategy.first
+}
 
 // Adds additional packages into Twirl
 //TwirlKeys.templateImports += "com.example.controllers._"
