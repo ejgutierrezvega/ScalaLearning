@@ -14,7 +14,6 @@ libraryDependencies ++= Seq(
   specs2 % Test,
   guice,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test,
-  "org.mongodb.scala" %% "mongo-scala-driver" % "2.1.0",
   "org.reactivemongo" %% "reactivemongo" % "0.12.5"
   )
 

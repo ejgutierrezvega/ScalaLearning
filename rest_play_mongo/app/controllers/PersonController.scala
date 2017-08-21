@@ -1,8 +1,8 @@
 package controllers
 
-import java.util.UUID
 import javax.inject._
 
+import generators.IGenerator
 import play.api.libs.json._
 import play.api.mvc._
 import repos.PersonRepo
@@ -12,31 +12,19 @@ import scala.concurrent.Await
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-/**
- * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
- */
-@Singleton
-class HomeController @Inject()(cc: ControllerComponents, personRepo: PersonRepo) extends AbstractController(cc) {
+class PersonController @Inject()(cc: ControllerComponents, personRepo: PersonRepo, uidGenerator: IGenerator) extends AbstractController(cc) {
 
-  /**
-   * Create an Action to render an HTML page.
-   *
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
-   */
   def index() = Action.async { implicit request: Request[AnyContent] =>
     val personList = personRepo.get(50)
 
-    personList.map { seqOfSomeClass =>
-      Ok(Json.toJson(seqOfSomeClass))
+    personList.map { persons =>
+      Ok(Json.toJson(persons))
     }
   }
 
   def post() = Action { implicit request: Request[AnyContent] =>
     val person = request.body.asJson.get.validate[Person].get
-    val newId = UUID.randomUUID().toString
+    val newId = uidGenerator.random.toString
     val personWithId = person.copy(id = Some(newId))
     personRepo.save(personWithId)
 
