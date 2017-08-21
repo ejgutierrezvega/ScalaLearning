@@ -5,7 +5,7 @@ import play.api.libs.json._
 import play.api.libs.functional.syntax._
 import reactivemongo.bson.Macros.Annotations.Key
 
-case class Person (@Key("_id") id: String, firstName: String, lastName: String, age: Int)
+case class Person (@Key("_id") id: Option[String], firstName: String, lastName: String, age: Int)
 
 object Person {
 
@@ -19,7 +19,7 @@ object Person {
   }
 
   implicit val PersonJsonReader: Reads[Person] = (
-    (JsPath \ "id").read[String] and
+    (JsPath \ "id").readNullable[String] and
     (JsPath \ "firstName").read[String] and
     (JsPath \ "lastName").read[String] and
     (JsPath \ "age").read[Int]
@@ -31,8 +31,8 @@ object Person {
         id <- bson.getAs[String]("_id")
         name <- bson.getAs[String]("firstName")
         last <- bson.getAs[String]("lastName")
-        age <- bson.getAs[BSONNumberLike]("personAge").map(_.toInt)
-      } yield new Person(id, name, last, age)
+        age <- bson.getAs[BSONNumberLike]("age").map(_.toInt)
+      } yield new Person(Some(id), name, last, age)
 
       opt.get // the person is required (or let throw an exception)
     }
