@@ -9,12 +9,18 @@ scalaVersion := "2.11.11"
 
 assemblyJarName in assembly := "scalaPlay.jar"
 
+resolvers ++= Seq(
+  Resolver.sonatypeRepo("public"),
+  Resolver.bintrayRepo("scalaz", "releases")
+)
+
 libraryDependencies ++= Seq(
   ws,
   specs2 % Test,
   guice,
   "org.scalatestplus.play" %% "scalatestplus-play" % "3.0.0" % Test,
-  "org.reactivemongo" %% "reactivemongo" % "0.12.5"
+  "org.reactivemongo" %% "reactivemongo" % "0.12.5",
+  "io.swagger" % "swagger-play2_2.11" % "1.6.0-SNAPSHOT"
   )
 
 PlayKeys.devSettings := Seq("play.server.http.port" -> "8080")
